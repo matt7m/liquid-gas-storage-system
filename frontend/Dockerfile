@@ -17,7 +17,6 @@ COPY . .
 EXPOSE 3000
 
 # set environment for hot reload possibility
-ENV CHOKIDAR_USEPOLLING=true
 ENV WATCHPACK_POLLING=true
 
 # run the app

@@ -1,0 +1,82 @@
+services:
+    # Postgres SQL database
+    postgres:
+        image: postgres:15-alpine
+        container_name: fueldistro-db
+        environment:
+            POSTGRES_DB: fueldistro_db
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: admin
+            POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./postgres_data:/var/lib/postgresql/data
+        networks:
+            - fueldistro-network
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres -d fueldistro_db" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    # Spring boot backend
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: fueldistro-backend
+        environment:
+            # Database connection
+            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fueldistro_db
+            SPRING_DATASOURCE_USERNAME: postgres
+            SPRING_DATASOURCE_PASSWORD: admin
+            SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+
+            # JPA/Hibernate settings
+            SPRING_JPA_HIBERNATE_DDL_AUTO: update
+            SPRING_JPA_SHOW_SQL: true
+            SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+
+            SERVER_PORT: 8080
+            SPRING_PROFILES_ACTIVE: docker
+        ports:
+            - "8080:8080"
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - fueldistro-network
+        volumes:
+            - ./backend/src:/app/src
+            - ./backend/target:/app/target
+
+    # React frontend
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        container_name: fueldistro-frontend
+        environment:
+            REACT_APP_API_BASE_URL: http://localhost:8080/api
+            REACT_APP_ENVIRONMENT: development
+            CHOKIDAR_USEPOLLING: true
+            WATCHPACK_POLLING: true
+        ports:
+            - "3000:3000"
+        depends_on:
+            - backend
+        networks:
+            - fueldistro-network
+        volumes:
+            - ./frontend/src:/app/src
+            - ./frontend/public:/app/public
+            - /app/node_modules
+
+networks:
+    fueldistro-network:
+        driver: bridge
+
+volumes:
+    posgres_data:
+        driver: local
