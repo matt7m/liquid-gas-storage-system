@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: backend
+    devtools:
+      restart:
+        enabled: false
+        pool-interval: 3s
+        quiet-period: 1s
+      main:
+        banner-mode: off
+  datasource:
+    url: jdbc:postgresql://localhost:5431/mydatabase
+    username: postgres
+    password: admin
+    jpa:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
