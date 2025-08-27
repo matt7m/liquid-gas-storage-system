@@ -9,7 +9,7 @@ services:
             POSTGRES_PASSWORD: admin
             POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
         ports:
-            - "5432:5432"
+            - "5431:5432"
         volumes:
             - ./postgres_data:/var/lib/postgresql/data
         networks:
@@ -28,7 +28,7 @@ services:
         container_name: fueldistro-backend
         environment:
             # Database connection
-            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fueldistro_db
+            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5431/fueldistro_db
             SPRING_DATASOURCE_USERNAME: postgres
             SPRING_DATASOURCE_PASSWORD: admin
             SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
