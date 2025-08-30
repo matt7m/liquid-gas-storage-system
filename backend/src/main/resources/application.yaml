@@ -12,10 +12,27 @@ spring:
       main:
         banner-mode: off
   datasource:
-    url: jdbc:postgresql://localhost:5431/mydatabase
+    url: jdbc:postgresql://localhost:5431/fueldistro_db
     username: postgres
     password: admin
-    jpa:
-      hibernate:
-        ddl-auto: update
-      show-sql: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+        hibernate:
+          default_schema: public
+    show-sql: true
+#spring:
+#  application:
+#    name: project
+#  datasource:
+#    password: admin
+#    url: jdbc:postgresql://localhost:5431/fueldistro_db
+#    username: postgres
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate:
+#        default_schema: public
+#    show-sql: true
